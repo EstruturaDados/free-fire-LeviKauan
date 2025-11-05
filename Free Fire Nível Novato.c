@@ -3,17 +3,17 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define MAX 10 // capacidade máxima total de itens (somando quantidade)
+#define MAX 10 // capacidade máxima total de unidades
 
 struct Item {
     char nome[30];
     char tipo[20];
-    int qtd;
+    int qtd; // quantidade de unidades
 };
 
 struct Item mochila[MAX];
 int numTipos = 0;      // número de tipos de itens
-int qtdTotalItens = 0; // quantidade total de itens na mochila
+int qtdTotalItens = 0; // quantidade total de unidades na mochila
 
 void limparTela() {
     for(int i=0;i<20;i++) printf("\n");
@@ -42,9 +42,8 @@ void adicionarItem() {
     int qtd;
     printf("Quantidade: "); scanf("%d", &qtd);
 
-    // verifica se ultrapassa a capacidade máxima
     if(qtdTotalItens + qtd > MAX){
-        qtd = MAX - qtdTotalItens; // ajusta para caber na mochila
+        qtd = MAX - qtdTotalItens; // ajusta para caber
         printf("Quantidade ajustada para %d para caber na mochila.\n", qtd);
     }
 
@@ -65,11 +64,33 @@ void removerItem() {
 
     for(int i=0;i<numTipos;i++){
         if(strcmp(mochila[i].nome, nome) == 0){
-            qtdTotalItens -= mochila[i].qtd; // diminui a quantidade total
-            for(int j=i;j<numTipos-1;j++) mochila[j]=mochila[j+1]; // shift
-            numTipos--;
             achou = 1;
-            printf("Item removido com sucesso!\n");
+
+            if(mochila[i].qtd > 1){
+                int qtdRemover;
+                printf("Quantidade disponível: %d\n", mochila[i].qtd);
+                printf("Quantas unidades deseja remover? "); 
+                scanf("%d", &qtdRemover);
+
+                if(qtdRemover >= mochila[i].qtd){
+                    qtdTotalItens -= mochila[i].qtd;
+                    // remove o tipo completamente
+                    for(int j=i;j<numTipos-1;j++) mochila[j]=mochila[j+1];
+                    numTipos--;
+                    printf("Item removido completamente.\n");
+                } else {
+                    mochila[i].qtd -= qtdRemover;
+                    qtdTotalItens -= qtdRemover;
+                    printf("Removidas %d unidades do item.\n", qtdRemover);
+                }
+
+            } else { // se quantidade = 1, remove direto
+                qtdTotalItens -= 1;
+                for(int j=i;j<numTipos-1;j++) mochila[j]=mochila[j+1];
+                numTipos--;
+                printf("Item removido.\n");
+            }
+
             break;
         }
     }
