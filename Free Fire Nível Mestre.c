@@ -125,12 +125,27 @@ int buscaBinariaPorNome(Componente itens[], int n, char chave[]) {
 void inserirItem(){
     if(numItens>=MAX){printf("Mochila cheia!\n"); return;}
     Componente novo;
-    getchar(); // limpa buffer
-    printf("Nome do componente: "); fgets(novo.nome,30,stdin); novo.nome[strcspn(novo.nome,"\n")]=0;
-    printf("Tipo do componente: "); fgets(novo.tipo,20,stdin); novo.tipo[strcspn(novo.tipo,"\n")]=0;
-    printf("Prioridade (1-10): "); scanf("%d",&novo.prioridade); getchar();
-    if(novo.prioridade<1 || novo.prioridade>10){printf("Prioridade invalida!\n"); return;}
-    mochila[numItens++]=novo;
+
+    // Limpa buffer corretamente antes de cada fgets
+    int c;
+    while((c=getchar()) != '\n' && c != EOF);
+
+    printf("Nome do componente: ");
+    fgets(novo.nome,30,stdin);
+    novo.nome[strcspn(novo.nome,"\n")]=0;
+
+    printf("Tipo do componente: ");
+    fgets(novo.tipo,20,stdin);
+    novo.tipo[strcspn(novo.tipo,"\n")]=0;
+
+    printf("Prioridade (1-10): "); 
+    scanf("%d",&novo.prioridade);
+
+    if(novo.prioridade<1 || novo.prioridade>10){
+        printf("Prioridade invalida!\n"); 
+        return;
+    }
+    mochila[numItens++] = novo;
     printf("Componente adicionado!\n");
 }
 
