@@ -121,30 +121,37 @@ int buscaBinariaPorNome(Componente itens[], int n, char chave[]) {
 
 // -------------------- Cadastro --------------------
 
-// Inserir novo componente
+// Inserir novo componente usando apenas fgets
 void inserirItem(){
     if(numItens>=MAX){printf("Mochila cheia!\n"); return;}
     Componente novo;
+    char buffer[50];
 
-    // Limpa buffer corretamente antes de cada fgets
-    int c;
-    while((c=getchar()) != '\n' && c != EOF);
-
+    // Nome
     printf("Nome do componente: ");
-    fgets(novo.nome,30,stdin);
-    novo.nome[strcspn(novo.nome,"\n")]=0;
+    fgets(novo.nome, sizeof(novo.nome), stdin);
+    novo.nome[strcspn(novo.nome, "\n")] = 0;
 
+    // Tipo
     printf("Tipo do componente: ");
-    fgets(novo.tipo,20,stdin);
-    novo.tipo[strcspn(novo.tipo,"\n")]=0;
+    fgets(novo.tipo, sizeof(novo.tipo), stdin);
+    novo.tipo[strcspn(novo.tipo, "\n")] = 0;
 
-    printf("Prioridade (1-10): "); 
-    scanf("%d",&novo.prioridade);
-
-    if(novo.prioridade<1 || novo.prioridade>10){
-        printf("Prioridade invalida!\n"); 
-        return;
+    // Prioridade
+    while(1){
+        printf("Prioridade (1-10): ");
+        fgets(buffer, sizeof(buffer), stdin);
+        if(sscanf(buffer,"%d",&novo.prioridade) != 1){
+            printf("Entrada invalida. Digite um numero.\n");
+            continue;
+        }
+        if(novo.prioridade<1 || novo.prioridade>10){
+            printf("Prioridade invalida! Deve ser 1 a 10.\n");
+            continue;
+        }
+        break;
     }
+
     mochila[numItens++] = novo;
     printf("Componente adicionado!\n");
 }
@@ -153,6 +160,7 @@ void inserirItem(){
 
 void menu(){
     int op;
+    char buffer[10];
     do{
         printf("\n====== MOCHILA DA TORRE DE FUGA ======\n");
         printf("Itens cadastrados: %d/%d\n",numItens,MAX);
@@ -163,7 +171,9 @@ void menu(){
         printf("5 - Ordenar por PRIORIDADE (Selection Sort)\n");
         printf("6 - Buscar componente por NOME (binaria)\n");
         printf("0 - Sair\n");
-        printf("Escolha uma opcao: "); scanf("%d",&op); getchar();
+        printf("Escolha uma opcao: ");
+        fgets(buffer,sizeof(buffer),stdin);
+        if(sscanf(buffer,"%d",&op)!=1) {op=-1;}
         int comparacoes;
         char chave[30];
         switch(op){
